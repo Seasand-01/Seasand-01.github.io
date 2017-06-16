@@ -4,10 +4,13 @@ html, body {
     margin: 0;
     padding: 0;
     font-family: 'Microsoft Yahei','微软雅黑',arial;
-    min-width: 1000px;
 }
 
-a,#player{
+.clearfix{
+	clear: both;
+}
+
+a,#audioPlayer{
 	transition: 0.2s ease-in-out;
     -webkit-transition: 0.2s ease-in-out;
     -moz-transition: 0.2s ease-in-out;
@@ -23,7 +26,12 @@ header{
 
 #logo{
 	width: 25%;
+	height: 98px;
 	float: left;
+}
+#logo img{
+	width: 100%;
+	height: 100%;
 }
 
 #titleArea{
@@ -50,10 +58,13 @@ header{
 }
 #cart2{
 	top: 0;
-	left: 500px;
+	left: 300px;
 }
 #titleView .cart h3{
 	color: yellow;
+	margin-top: 10px;
+	width: 100%;
+	word-wrap:break-word;
 }
 #titleView .cart h5{
 	color: yellow;
@@ -94,10 +105,188 @@ header{
 
 #wrapper{
 	margin-top: 5px;
+	width: 100%;
+	text-align: center;
 }
 
+#lyricArea{
+	height: 380px;
+    overflow: hidden;
+    position: relative;
+    margin-top: 50px;
+    color: #fff;
+}
+#lyricView{
+	text-align: center;
+	position: relative;
+	top: 130px;
+    text-shadow: 1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000;
+}
+#lyricView p{
+	color: #eee;
+	font-size: 16px;
+}
+
+/*=================================================================================================*/
+
+#audioPlayer{
+	width: 500px;
+	height: 100px;
+	margin: 0 auto;
+	margin-top: 20px;
+	background: #494949;
+	opacity: 0.3;
+	border-radius: 5px;
+	padding: 10px;
+}
+#audioPlayer:hover{
+	opacity: 0.8;
+}
+
+#audioArea{
+	width: 390px;
+	height: 100%;
+	float: left;
+}
+
+#controlArea{
+	width: 100%;
+	height: 50px;
+	margin-left: 10px;
+}
+#controls{
+	width: 45%;
+	height: 100%;
+	float: left;
+	text-align: left;
+}
+#controls img{
+	border: 2px solid #B0F292;
+	margin-right: 20px;
+	margin-top: 4px;
+	cursor: pointer;
+}
+#controls img:hover{
+	border: 2px solid #fff;
+	padding: 1px;
+}
+#playBtn{
+	width: 40px;
+	height: 40px;
+	border-radius: 20px; 
+}
+#pauseBtn{
+	width: 40px;
+	height: 40px;
+	border-radius: 20px;
+	display: none;
+}
+#preBtn{
+	width: 30px;
+	height: 30px;
+	border-radius: 15px;
+}
+#nextBtn{
+	width: 30px;
+	height: 30px;
+	border-radius: 15px;
+}
+
+#sound{
+	width: 55%;
+	height: 100%;
+	float: right;
+}
+#soundBar{
+	width: 80%;
+	float: left;
+    margin-left: 5px;
+	margin-top: 20px;
+}
+#soundBarTip{
+	width: 25px;
+	height: 25px;
+	margin-top: 12px;
+	float: left;
+}
+
+#progressBarArea{
+	width: 100%;
+	height: 20px;
+	margin-top: 10px;
+	margin-left: 10px;
+}
+#progressBar {
+    width: 70%;
+	margin-top: 3px;
+	float: left;
+}
+#timeTips{
+	width: 30%;
+	height: 18px;
+	float: right;
+	text-align: center;
+	line-height: 18px;
+	color: #B0F292;
+}
+
+.progressBar {
+    -webkit-appearance: none;
+    cursor: pointer;
+	background-color: #141414;
+    border-radius: 5px; /*这个属性设置使填充进度条时的图形为圆角*/
+}
+.progressBar::-webkit-slider-thumb {
+    -webkit-appearance: none;
+}
+.progressBar::-webkit-slider-runnable-track {
+    height: 10px;
+    border-radius: 10px; /*将轨道设为圆角的*/
+    box-shadow: 0 1px 1px #def3f8, inset 0 .125em .125em #0d1112; /*轨道内置阴影效果*/
+}
+.progressBar:focus {
+    outline: none;
+}
+.progressBar::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 20px;
+    width: 20px;
+    margin-top: -5px; /*使滑块超出轨道部分的偏移量相等*/
+    background: #ffffff; 
+    border-radius: 50%; /*外观设置为圆形*/
+    border: solid 0.125em rgba(205, 224, 230, 0.5); /*设置边框*/
+    box-shadow: 0 .125em .125em #3b4547; /*添加底部阴影*/
+}
+
+#listBtn{
+	width: 80px;
+	height: 100%;
+	float: right;
+	text-align: center;
+	border-left: 1px solid #ccc;
+}
+#listBtn img{
+	width: 50px;
+	height: 50px;
+	margin-top: 15px;
+	cursor: pointer;
+}
+#listBtn img:hover{
+	padding: 2px;
+}
+
+/*=================================================================================================*/
+
+footer{
+	width: 100%;
+	height: 20px;
+	clear: both;
+}
+
+/*=================================================================================================*/
+
 #playList{
-	width: 25%;
+	width: 300px;
 	height: 560px;
 	border: 1px solid #ccc;
 	border-radius: 2px;
@@ -106,6 +295,10 @@ header{
 	padding: 5px;
 	float: left;
 	overflow: auto;
+	position: absolute;
+	top: 105px;
+	left: 0px;
+	z-index: 99;
 }
 
 /*定义滚动条宽高及背景，宽高分别对应横竖滚动条的尺寸*/
@@ -151,69 +344,3 @@ header{
 }
 
 /*=================================================================================================*/
-
-#playContent{
-	width: 73%;
-	height: 560px;
-	float: right;
-	position:relative;
-}
-
-#lyricArea{
-	height: 350px;
-    overflow: hidden;
-    position: relative;
-    margin-top: 50px;
-    color: #fff;
-}
-#lyricView{
-	text-align: center;
-	position: relative;
-	top: 130px;
-    text-shadow: 1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000;
-}
-#lyricView p{
-	color: #eee;
-	font-size: 16px;
-}
-
-/*the highlight color of the current lyric line*/
-.current-line-0 {
-	font-size: 20px;
-    color: #FAFA17;
-}
-.current-line-1 {
-	font-size: 20px;
-    color: #ff1493;
-}
-.current-line-2 {
-	font-size: 20px;
-    color: #adff2f;
-}
-.current-line-3 {
-	font-size: 20px;
-    color: #c617e8;
-}
-
-/*audio player settings*/
-#player {
-    position: absolute;
-    bottom: 5px;
-    opacity: 0.5;
-    left: 30%;
-    right: 0;
-    z-index: 99;
-    cursor: pointer;
-}
-#player:hover {
-    opacity: 1;
-}
-
-/*=================================================================================================*/
-
-/*page footer settings*/
-footer{
-	width: 100%;
-	height: 20px;
-	clear: both;
-}

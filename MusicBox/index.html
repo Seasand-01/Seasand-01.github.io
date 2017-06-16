@@ -25,7 +25,7 @@
                         <h3>MusicBox</h3>
                         <h5> -- make by Seasand-yyh</h5>
                     </div>
-                    <div id="cart2" class="cart" style="left:500px;">
+                    <div id="cart2" class="cart" style="left:300px;">
                         <h3>MusicBox</h3>
                         <h5> -- make by Seasand-yyh</h5>
                     </div>
@@ -36,22 +36,46 @@
                     <i class="fa fa-cog fa-2x"></i>
                 </a>
             </div>
-            <div style="clear:both;"></div>
+            <div class="clearfix"></div>
         </header>
         <div id="wrapper">
-            <div id="playList" class="scrollbar">
-                <ol></ol>
+            <div id="lyricArea">
+                <div id="lyricView"></div>
             </div>
-            <div id="playContent">
-                <div id="lyricArea">
-                    <div id="lyricView"></div>
+            <div id="audioPlayer">
+                <audio id="audio" src="">!audio not supported on your browser :(</audio>
+                <div id="audioArea">
+                    <div id="controlArea">
+                        <div id="controls">
+                            <img id="preBtn" src="./images/btn_pre.png" alt="上一首" title="上一首">
+                            <img id="playBtn" src="./images/btn_play.png" alt="播放" title="播放">
+                            <img id="pauseBtn" src="./images/btn_pause.png" alt="暂停" title="暂停">
+                            <img id="nextBtn" src="./images/btn_next.png" alt="下一首" title="下一首">
+                        </div>
+                        <div id="sound">
+                            <img id="soundBarTip" src="./images/btn_sound.png" alt="音量" title="音量">
+                            <input type="range" id="soundBar" class="progressBar" min="0" max="10" step="1" value="5" title="音量"/>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div id="progressBarArea">
+                        <input type="range" id="progressBar" class="progressBar" min="0" step="0" value="0" title="当前进度"/>
+                        <div id="timeTips"><span id="tip1">00:00</span>&nbsp;/&nbsp;<span id="tip2">00:00</span></div>
+                        <div class="clearfix"></div>
+                    </div>
                 </div>
-                <div id="player">
-                    <audio controls id="audio" src="">!audio not supported on your browser :(</audio>
+                <div id="listBtn">
+                    <img src="./images/btn_list.png" alt="播放列表" title="播放列表">
                 </div>
             </div>
         </div>
         <footer></footer>
+        
+        <!-- PlayList -->
+        <div id="playList" class="scrollbar">
+            <ol></ol>
+        </div>
 
         <!-- Modal -->
         <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -67,7 +91,7 @@
                         <div id="skinContent"  class="scrollbar">
                             
                         </div>
-                        <div style="clear:both;"></div>
+                        <div class="clearfix"></div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal" id="cancleButton">关闭</button>
@@ -81,5 +105,6 @@
     <!-- scripts -->
     <script type="text/javascript" src="./assets/jquery/jquery-2.2.3.min.js"></script>
     <script type="text/javascript" src="./assets/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="./scripts/EasyStorage.js"></script>
     <script type="text/javascript" src="./scripts/script.js"></script>
 </html>

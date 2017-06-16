@@ -1,37 +1,47 @@
 /**
  * MusicBox - script.js
+ * Author: Seasand-yyh
+ * Date: 2017-06-13
  */
 
 $(function(){
-	MBConfig.init();
+	MusicBox.init();
 });
 
-var MBConfig = {
+var MusicBox = {
 
-	pageBGRes : ['./images/pageBG/01.jpg','./images/pageBG/02.jpg','./images/pageBG/03.jpg',
-				'./images/pageBG/04.jpg','./images/pageBG/05.jpg','./images/pageBG/06.jpg',
-				'./images/pageBG/07.jpg','./images/pageBG/08.jpg','./images/pageBG/09.jpg',
-				'./images/pageBG/10.jpg','./images/pageBG/11.jpg','./images/pageBG/12.jpg',
-				'./images/pageBG/13.jpg','./images/pageBG/14.jpg','./images/pageBG/15.jpg'
+	currentSongIndex: 0,
+	currentPlayList: [],
+	currentSongLyric: null,
+	player: null,
+	pageBGRes: ['./images/pageBG/01.jpg','./images/pageBG/02.jpg','./images/pageBG/03.jpg',
+				 './images/pageBG/04.jpg','./images/pageBG/05.jpg','./images/pageBG/06.jpg',
+				 './images/pageBG/07.jpg','./images/pageBG/08.jpg','./images/pageBG/09.jpg',
+				 './images/pageBG/10.jpg','./images/pageBG/11.jpg','./images/pageBG/12.jpg',
+				 './images/pageBG/13.jpg','./images/pageBG/14.jpg','./images/pageBG/15.jpg'
 	],
 
-	songsRes : [],
 
-	currentSongIndex : 0,
+	init: function(){
+		MusicBox.player = document.getElementById('audio');
 
-	currentSongLyric : null,
-
-	init : function(){
-		MBConfig.initPageBG();
-		MBConfig.loadPageBGRes();
-		MBConfig.switchPageBG();
-		MBConfig.scrollSongTitle();
-		MBConfig.loadSongsRes();
-		MBConfig.autoPlayNext();
-		MBConfig.scrollLyric();
+		MusicBox.initPageBG();
+		MusicBox.loadPageBGRes();
+		MusicBox.switchPageBG();
+		MusicBox.scrollSongTitle();
+		MusicBox.togglePlayList();
+		MusicBox.togglePlayButton();
+		MusicBox.loadSongsRes();
+		MusicBox.listenOnPlayList();
+		MusicBox.writeRecordOnUnload();
+		MusicBox.autoPlayNext();
+		MusicBox.listenOnControl();
+		MusicBox.initVolume();
+		MusicBox.initTracker();
+		MusicBox.scrollLyric();
 	},
 
-	setPageBG : function(url){
+	setPageBG: function(url){
 		$('body').css({
 			'background': 'url('+url+') no-repeat center center fixed',
 			'-webkit-background-size': 'cover',
@@ -39,21 +49,28 @@ var MBConfig = {
 		    '-o-background-size': 'cover',
 		    'background-size': 'cover'
 		});
+		EasyStorage.setItem('skinURL',url);
 	},
 
-	initPageBG : function(){
-		var index = Math.floor(Math.random() * MBConfig.pageBGRes.length);
-		var url = MBConfig.pageBGRes[index];
-		MBConfig.setPageBG(url);
+	initPageBG: function(){
+		var skinURL = EasyStorage.getItem('skinURL');
+		var url = '';
+		if(skinURL && skinURL!=''){
+			url = skinURL;
+		}else{
+			var index = Math.floor(Math.random() * MusicBox.pageBGRes.length);
+			url = MusicBox.pageBGRes[index];
+		}
+		MusicBox.setPageBG(url);
 	},
 
-	loadPageBGRes : function(){
+	loadPageBGRes: function(){
 		var strContent = '';
-		for(var i=0; i<MBConfig.pageBGRes.length; i++){
-			var url = MBConfig.pageBGRes[i];
+		for(var i=0; i<MusicBox.pageBGRes.length; i++){
+			var url = MusicBox.pageBGRes[i];
 			strContent += '<div class="skinPic">'
 						+ '		<label>'
-                        + '			<input type="radio" name="skins" alt="'+url+'"/>'
+                        + '			<input type="radio" name="skins" value="'+url+'"/>'
                         + '			<img src="'+url+'" width="230px" >'
                         + '		</label>'
                         + '</div>';
@@ -61,26 +78,26 @@ var MBConfig = {
 		$('#skinContent').html(strContent);
 	},
 
-	switchPageBG : function(){
+	switchPageBG: function(){
 		$('#saveButton').click(function(){
-			var url = $('input[name=skins]:checked').attr('alt');
+			var url = $('input[name=skins]:checked').val();
 			if(url!=''){
-				MBConfig.setPageBG(url);
+				MusicBox.setPageBG(url);
 			}
 			$("#cancleButton").click();
 		});
 	},
 
-	scrollSongTitle : function(){
+	scrollSongTitle: function(){
 		var doScroll = function(){
 			var carts = $('#titleView .cart');
 			for(var i=0; i<carts.length; i++){
 				var oriVal = parseInt(carts[i].style.left);
 				var val;
-				if(oriVal>-500){
+				if(oriVal>-300){
 					val = oriVal - 1;
 				}else{
-					val = 500;
+					val = 300;
 				}
 				carts[i].style.left = val + 'px';
 			}
@@ -88,96 +105,228 @@ var MBConfig = {
 
 		var inter = setInterval(function(){
 			doScroll();
-		},30);
+		},50);
 
 		$('#titleView').hover(function(){
 			clearInterval(inter);
 		},function(){
 			inter = setInterval(function(){
 				doScroll();
-			},30);
+			},50);
 		});
 	},
 
-	loadSongsRes : function(){
+	togglePlayList: function(){
+		var count = 1;
+		var leftValue = '';
+		$('#listBtn img').click(function(){
+			if(count>0){
+				leftValue = '-300px';
+			}else{
+				leftValue = '0px';
+			}
+			count = -1*count;
+			$('#playList').animate({
+				left: leftValue
+			},'slow');
+		});
+	},
+
+	togglePlayButton: function(){
+		$('#playBtn').click(function(){
+			$('#pauseBtn').show();
+			$('#playBtn').hide();
+		});
+		$('#pauseBtn').click(function(){
+			$('#playBtn').show();
+			$('#pauseBtn').hide();
+		});
+	},
+
+	loadSongsRes: function(){
 		$.getJSON("./content/config/songs.json", function(data){
 			if(data && data.songs){
-				MBConfig.songsRes = data.songs;
-				MBConfig.renderPlayList(MBConfig.songsRes);
-				MBConfig.autoPlayOnPageLoad();
+				MusicBox.currentPlayList = data.songs;
+				MusicBox.renderPlayList(MusicBox.currentPlayList);
+				MusicBox.autoPlayOnLoad();
 			}
 		});
 	},
 
-	renderPlayList : function(songs){
+	renderPlayList: function(songs){
 		if(!songs){
 			return ;
 		}
 		var contStr = '';
 		for(var i=0; i<songs.length; i++){
-			var singer = songs[i].singer;
-			var songName = songs[i].songName;
-			var filename = songs[i].filename;
-			contStr += '<li><a class="menuLink" onclick="MBConfig.playSong('+i+',\''+singer+'\',\''+songName+'\',\''+filename+'\')">'+singer+' - '+songName+'</a></li>';
+			var obj = songs[i];
+			contStr += '<li><a class="menuLink songTag" alt="'+i+'">'+obj.singer+' - '+obj.songName+'</a></li>';
 		}
 		$('#playList ol').html(contStr);
 	},
 
-	playSong : function(index,singer,songName,filename){
-		MBConfig.currentSongIndex = index;
+	listenOnPlayList: function(){
+		$('#playList ol').delegate('.songTag','click',function(){
+			var index =$(this).attr('alt');
+			MusicBox.currentSongIndex = index;
+			MusicBox.playSong();
+		});
+	},
+
+	playSong: function(){
+		var index = MusicBox.currentSongIndex;
+		var currentSong = MusicBox.currentPlayList[index];
+		if(currentSong==null){
+			return;
+		}
 
 		//show song info on title
-		$('#titleView .cart h3').text(songName);
-		$('#titleView .cart h5').text(" -- 演唱者："+singer);
+		$('#titleView .cart h3').text(currentSong.songName);
+		$('#titleView .cart h5').text(" -- 演唱："+currentSong.singer);
 
-		window.location.hash = filename;
+		window.location.hash = currentSong.songName;
 		var targetLi = $('#playList ol li').eq(index);
 		$(targetLi).addClass('isPlayonList');
 		$(targetLi).siblings().removeClass('isPlayonList');
 
-		var lyricURL = './content/lyric/'+filename.substring(0,filename.lastIndexOf('.'))+'.lrc';
-		MBConfig.getLyric(lyricURL);
+		$('#pauseBtn').show();
+		$('#playBtn').hide();
 
-		var playURL = './content/song/'+filename;
-		var audioPlayer = document.getElementById('audio');
-		audioPlayer.src = playURL;
-		audioPlayer.addEventListener('canplay', function() {
+		var lyricURL = './content/lyric/'+currentSong.filename.substring(0,currentSong.filename.lastIndexOf('.'))+'.lrc';
+		MusicBox.getLyric(lyricURL);
+
+		var playURL = './content/song/'+currentSong.filename;
+		MusicBox.player.src = playURL;
+		MusicBox.player.addEventListener('canplay', function() {
             this.play();
-        });
-	},
 
-	autoPlayOnPageLoad : function(){
-		var index = 0;
-		if(window.location.hash){
-			index = parseInt(window.location.hash.substring(1,window.location.hash.lastIndexOf('.')));
-		}
-		var song = MBConfig.songsRes[index];
-		MBConfig.playSong(index,song.singer,song.songName,song.filename);
-	},
-
-	autoPlayNext : function(){
-		var audioPlayer = document.getElementById('audio');
-        audioPlayer.addEventListener('ended', function() {
-            if(MBConfig.currentSongIndex<MBConfig.songsRes.length-1){
-            	index = MBConfig.currentSongIndex+1;
-            }else{
-            	index = 0;
+            var min = parseInt(MusicBox.player.duration/60);
+            if(min<10){
+            	min = '0'+min;
             }
-            var song = MBConfig.songsRes[index];
-			MBConfig.playSong(index,song.singer,song.songName,song.filename);
+			var sec = parseInt(MusicBox.player.duration%60)+1;
+			if(sec<10){
+            	sec = '0'+sec;
+            }
+			$('#tip2').text(min+':'+sec);
+
+			var progressBar = document.getElementById('progressBar');
+			progressBar.min = 0;
+			progressBar.step = 1;
+			progressBar.value = 0;
+			progressBar.max = MusicBox.player.duration;
         });
 	},
 
-	getLyric : function(url) {
+	autoPlayOnLoad: function(){
+		var songIndex = EasyStorage.getItem('songIndex');
+		var songCurrentTime = EasyStorage.getItem('songCurrentTime');
+
+		if(songIndex && songIndex!=''){
+			MusicBox.currentSongIndex = parseInt(songIndex);
+			if(songCurrentTime){
+				MusicBox.player.currentTime = parseInt(songCurrentTime,10);
+			}
+		}else{
+			MusicBox.currentSongIndex = 0; //如果没有记录，则播放第一首
+		}
+		MusicBox.playSong();
+	},
+
+	writeRecordOnUnload: function(){
+		$(window).unload(function(){
+			EasyStorage.setItem('songIndex',MusicBox.currentSongIndex);
+			EasyStorage.setItem('songCurrentTime',MusicBox.player.currentTime);
+		});
+	},
+
+	autoPlayNext: function(){
+        MusicBox.player.addEventListener('ended', function() {
+            if(MusicBox.currentSongIndex<MusicBox.currentPlayList.length-1){
+            	MusicBox.currentSongIndex++;
+            }else{
+            	MusicBox.currentSongIndex = 0;
+            }
+            MusicBox.playSong();
+        });
+	},
+
+	listenOnControl: function(){
+
+		$('#playBtn').click(function(){
+			MusicBox.player.play();
+		});
+
+		$('#pauseBtn').click(function(){
+			MusicBox.player.pause();
+		});
+
+		$('#preBtn').click(function(){
+			if(MusicBox.currentSongIndex>0){
+            	MusicBox.currentSongIndex--;
+            }else{
+            	MusicBox.currentSongIndex = MusicBox.currentPlayList.length-1;
+            }
+            MusicBox.playSong();
+		});
+
+		$('#nextBtn').click(function(){
+			if(MusicBox.currentSongIndex<MusicBox.currentPlayList.length-1){
+            	MusicBox.currentSongIndex++;
+            }else{
+            	MusicBox.currentSongIndex = 0;
+            }
+            MusicBox.playSong();
+		});
+	},
+
+	initVolume: function(){
+		MusicBox.player.volume = parseInt($('#soundBar').val())/10;
+		$('#soundBar').change(function(){
+			var volume = $(this).val();
+			MusicBox.player.volume = volume/10;
+		});
+	},
+
+	initTracker: function(){
+		$('#progressBar').change(function(){
+			var progress = $(this).val();
+			if(progress){
+				$('#pauseBtn').show();
+				$('#playBtn').hide();
+				MusicBox.player.currentTime = progress;
+			}
+		});
+
+		MusicBox.player.addEventListener('timeupdate',function (){
+            var curtime = parseInt(MusicBox.player.currentTime, 10);
+            var duration = parseInt(MusicBox.player.duration, 10);
+
+            var progressBar = document.getElementById('progressBar');
+			progressBar.value = curtime;
+
+            var min = parseInt(curtime/60);
+            if(min<10){
+            	min = '0'+min;
+            }
+			var sec = parseInt(curtime%60);
+			if(sec<10){
+            	sec = '0'+sec;
+            }
+			$('#tip1').text(min+':'+sec);		
+        });
+	},
+
+	getLyric: function(url) {
         $('#lyricView').html('<p style="font-size:20px;font-weight:bold;color:yellow;"> Loading... </p>');
         $.ajax({
 			type: "GET",
 			url: url,
 			dataType: "text",
 			success: function(data){
-				var lyric = MBConfig.parseLyric(data);
-				MBConfig.renderLyric(lyric);
-				MBConfig.currentSongLyric = lyric;
+				var lyric = MusicBox.parseLyric(data);
+				MusicBox.renderLyric(lyric);
+				MusicBox.currentSongLyric = lyric;
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
                 $('#lyricView').html('<p style="font-size:20px;font-weight:bold;color:yellow;"> 歌词加载失败！ </p>');
@@ -185,7 +334,7 @@ var MBConfig = {
 		});
     },
 
-    parseLyric : function(text) {
+    parseLyric: function(text) {
         //get each line from the text
         var lines = text.split('\n'),
             //this regex mathes the time [00.12.78]
@@ -193,7 +342,7 @@ var MBConfig = {
             result = [];
 
         // Get offset from lyrics
-        var offset = MBConfig.getOffset(text);
+        var offset = MusicBox.getOffset(text);
 
         //exclude the description parts or empty parts of the lyric
         while (!pattern.test(lines[0])) {
@@ -218,7 +367,7 @@ var MBConfig = {
         return result;
     },
 
-    renderLyric : function(lyric) {
+    renderLyric: function(lyric) {
         var lyricContainer = document.getElementById('lyricView');
         var fragment = document.createDocumentFragment();
         //clear the lyric container first
@@ -233,7 +382,7 @@ var MBConfig = {
         lyricContainer.appendChild(fragment);
     },
 
-    getOffset : function(text) {
+    getOffset: function(text) {
         //Returns offset in miliseconds.
         var offset = 0;
         try {
@@ -251,12 +400,12 @@ var MBConfig = {
         return offset;
     },
 
-    scrollLyric : function(){
+    scrollLyric: function(){
     	var colors = ['#FAFA17','#ff1493','#adff2f','#c617e8'];
     	var lyricStyle = Math.floor(Math.random() * 4);
-    	var audioPlayer = document.getElementById('audio');
-    	audioPlayer.addEventListener("timeupdate", function(e) {
-    		var lyric = MBConfig.currentSongLyric;
+    	
+    	MusicBox.player.addEventListener("timeupdate", function(e) {
+    		var lyric = MusicBox.currentSongLyric;
     		if (!lyric) return;
             for (var i = 0, l = lyric.length; i < l; i++) {
                 if (this.currentTime > lyric[i][0] - 0.50 /*preload the lyric by 0.50s*/ ) {
@@ -267,7 +416,7 @@ var MBConfig = {
                     prevLine.style.fontSize = '16px';
                     //randomize the color of the current line of the lyric
                     line.style.color = colors[lyricStyle];
-                    line.style.fontSize = '20px';
+                    line.style.fontSize = '26px';
 
                     var lyricView = document.getElementById('lyricView');
                     lyricView.style.top = 130 - line.offsetTop + 'px';
