@@ -225,7 +225,7 @@ var MusicBox = {
 		if(songIndex && songIndex!=''){
 			MusicBox.currentSongIndex = parseInt(songIndex);
 			if(songCurrentTime){
-				MusicBox.player.currentTime = parseInt(songCurrentTime,10);
+				//MusicBox.player.currentTime = parseInt(songCurrentTime,10);
 			}
 		}else{
 			MusicBox.currentSongIndex = 0; //如果没有记录，则播放第一首
