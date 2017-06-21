@@ -192,7 +192,7 @@ var MusicBox = {
 		$('#pauseBtn').show();
 		$('#playBtn').hide();
 
-		var lyricURL = './content/lyric/'+currentSong.filename.substring(0,currentSong.filename.lastIndexOf('.'))+'.lrc';
+		var lyricURL = './content/song/'+currentSong.filename.substring(0,currentSong.filename.lastIndexOf('.'))+'.lrc';
 		MusicBox.getLyric(lyricURL);
 
 		var playURL = './content/song/'+currentSong.filename;
