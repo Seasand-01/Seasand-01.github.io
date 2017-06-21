@@ -10,7 +10,14 @@
 		{"singer":"陈慧娴", "songName":"人生何处不相逢.mp3", "filename":"6.mp3"},
 		{"singer":"陈慧娴", "songName":"傻女.mp3", "filename":"7.mp3"},
 		{"singer":"陈慧娴", "songName":"逝去的诺言.mp3", "filename":"8.mp3"},
-		{"singer":"陈慧娴", "songName":"夜机.mp3", "filename":"9.mp3"}
+		{"singer":"陈慧娴", "songName":"夜机.mp3", "filename":"9.mp3"},
+
+		{"singer":"郁可唯", "songName":"Bressanon.mp3", "filename":"郁可唯/郁可唯 - Bressanon.mp3"},
+		{"singer":"郁可唯", "songName":"恋香.mp3", "filename":"郁可唯/郁可唯 - 恋香.mp3"},
+		{"singer":"郁可唯", "songName":"青衣谣.mp3", "filename":"郁可唯/郁可唯 - 青衣谣.mp3"},
+		{"singer":"郁可唯", "songName":"时间煮雨.mp3", "filename":"郁可唯/郁可唯 - 时间煮雨.mp3"},
+		{"singer":"郁可唯", "songName":"思慕.mp3", "filename":"郁可唯/郁可唯 - 思慕.mp3"},
+		{"singer":"郁可唯", "songName":"远方.mp3", "filename":"郁可唯/郁可唯 - 远方.mp3"}
 
 	]
 }
