@@ -406,22 +406,23 @@ var MusicBox = {
     	
     	MusicBox.player.addEventListener("timeupdate", function(e) {
     		var lyric = MusicBox.currentSongLyric;
-    		if (!lyric) return;
-            for (var i = 0, l = lyric.length; i < l; i++) {
-                if (this.currentTime > lyric[i][0] - 0.50 /*preload the lyric by 0.50s*/ ) {
-                    var line = document.getElementById('line-' + i),
-                        prevLine = document.getElementById('line-' + (i > 0 ? i - 1 : i));
-                    
-                    prevLine.style.color = '#fff';
-                    prevLine.style.fontSize = '16px';
-                    //randomize the color of the current line of the lyric
-                    line.style.color = colors[lyricStyle];
-                    line.style.fontSize = '26px';
+    		if (lyric && lyric!=null){
+	            for (var i = 0, l = lyric.length; i < l; i++) {
+	                if (this.currentTime > lyric[i][0] - 0.50 /*preload the lyric by 0.50s*/ ) {
+	                    var line = document.getElementById('line-' + i),
+	                        prevLine = document.getElementById('line-' + (i > 0 ? i - 1 : i));
+	                    
+	                    prevLine.style.color = '#fff';
+	                    prevLine.style.fontSize = '16px';
+	                    //randomize the color of the current line of the lyric
+	                    line.style.color = colors[lyricStyle];
+	                    line.style.fontSize = '26px';
 
-                    var lyricView = document.getElementById('lyricView');
-                    lyricView.style.top = 130 - line.offsetTop + 'px';
-                };
-            };
+	                    var lyricView = document.getElementById('lyricView');
+	                    lyricView.style.top = 130 - line.offsetTop + 'px';
+	                }
+	            }
+	        }
         });
     }
 
